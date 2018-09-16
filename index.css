@@ -1,0 +1,6 @@
+/* Centraliza a div */
+#tudo {
+    margin: 0 auto;
+    width: 20%; 
+    margin-top: 10%;
+}

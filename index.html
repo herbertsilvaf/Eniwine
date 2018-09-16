@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+	<meta charset="utf-8" />
+
+	<!--Adicionando o Boostrap CSS-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	 crossorigin="anonymous">
+
+	<link rel="stylesheet" href="animate.css">
+
+	<!--Adicionando o jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!--Adicionando o Pooper JS-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+	 crossorigin="anonymous"></script>
+
+	<!--Adicionando o BootsTrap JS-->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	 crossorigin="anonymous"></script>
+
+	<!--Adicionando o index css JS-->
+	<link rel="stylesheet" href="index.css">
+
+
+
+</head>
+
+<body>
+
+	<!--Centralizando a div-->
+	<div id="tudo">
+		<div id="conteudo">
+			
+
+			<!--Começa o Formulário-->
+			<form class="animated slideInUp">
+
+				<!--Input e Label Criminoso | 
+					ID de Chamada: getCriminoso	
+				-->
+				<div class="form-group">
+					<label>Quem é o Criminoso?</label>
+					<input type="text" class="form-control col-sm-4" id="getCriminoso" placeholder="0-9">
+				</div>
+
+				<!--Input e Label Local | 
+					ID de Chamada: getLocal	
+				-->
+				<div class="form-group">
+					<label>Qual foi o Local?</label>
+					<input type="text" class="form-control col-sm-4" id="getLocal" placeholder="0-9">
+				</div>
+
+				<!--Input e Label Arma | 
+					ID de Chamada: getArma	
+				-->
+				<div class="form-group">
+					<label>Qual foi a Arma?</label>
+					<input type="text" class="form-control col-sm-4" id="getArma" placeholder="0-9">
+				</div>
+
+				<!--Submetar Palpite | 
+					ID: getCaso	
+				-->
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm" id="getCaso">Fazer
+					Palpite</button>
+			</form>
+
+
+			<!--Pop Up com resposta da solicitação-->
+			<div class="modal fade bd-example-modal-sm animated shake" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+			 aria-hidden="true">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+
+						<!--ID de modificação do JS-->
+						<h1 id="resposta"></h1>
+
+						<!--Botão Tentar Novamente-->
+						<button type="button" class="btn btn-warning" data-dismiss="modal" id="tentarNovamente" style="display: hide">Tentar
+							Novamente</button>
+					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+
+
+</body>
+
+<script>
+
+	/*ATENÇÃO*/
+	/*Inspencione a Página HTML e 
+	vá até a aba CONSOLE para saber o resultado*/
+
+	/*Declaração de Variáveis*/
+	var randomArmas, randomCriminoso, randomLocal;
+
+	/*Função Inicia junto com o Load da Página*/
+	$(document).ready(function () {
+
+		/*Chamada AJAX Criminosos*/
+		$.ajax({
+			url: "https://handson.eniwine.com.br/api/descubraoassassino/criminosos",
+			type: "GET",
+			dataType: "xml",
+			success: function (data) {
+
+				/*Separa a String do data*/
+				t = $(data).find('string').text();
+				/*Transforma em Objeto*/
+				listCriminoso = JSON.parse(t);
+
+				/*Sorteia Um Criminoso do data e retorna o id*/
+				randomCriminoso = Math.floor(Math.random() * listCriminoso.length);
+				console.log("criminoso = " + randomCriminoso);
+			}
+		});
+
+		/*Chamada AJAX Locais*/
+		$.ajax({
+			url: "https://handson.eniwine.com.br/api/descubraoassassino/locais",
+			type: "GET",
+			dataType: "xml",
+			success: function (data) {
+
+				/*Separa a String do data*/
+				t = $(data).find('string').text();
+				/*Transforma em Objeto*/
+				listLocal = JSON.parse(t);
+
+				/*Sorteia Um Local do data e retorna o id*/
+				randomLocal = Math.floor(Math.random() * listLocal.length);
+				console.log("local = " + randomLocal);
+			}
+		});
+
+		/*Chamada AJAX Armas*/
+		$.ajax({
+			url: "https://handson.eniwine.com.br/api/descubraoassassino/armas",
+			type: "GET",
+			dataType: "xml",
+			success: function (data) {
+
+				/*Separa a String do data*/
+				t = $(data).find('string').text();
+				/*Transforma em Objeto*/
+				listArmas = JSON.parse(t);
+
+				/*Sorteia Uma Arma do data e retorna o id*/
+				randomArmas = Math.floor(Math.random() * listArmas.length);
+				console.log("arma = " + randomArmas);
+			}
+		});
+	})
+
+	/*Função Botão Fazer Palpite*/
+	$('#getCaso').click(function () {
+
+		/*Declaraçao de Variáveis*/
+		var criminoso = false;
+		var local = false;
+		var armas = false;
+
+		/*Comparação com variável o Criminosos Sorteado*/
+		if (randomCriminoso == ($("#getCriminoso").val())) {
+			criminoso = true;
+		}
+		else {
+			criminoso = false;
+		}
+
+		/*Comparação com variável o Local Sorteado*/
+		if (randomLocal == ($("#getLocal").val())) {
+			local = true;
+		}
+		else {
+			local = false;
+		}
+
+		/*Comparação com variável a Arma Sorteada*/
+		if (randomArmas == ($("#getArma").val())) {
+			armas = true;
+		}
+		else {
+			armas = false;
+		}
+
+		/*Retorno das respostas das comparações*/
+		if ((criminoso == false) && (local == false) && (armas == false)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "todos estão incorretos";
+		}
+
+		if ((criminoso == true) && (local == false) && (armas == false)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "somente o criminoso está correto";
+		}
+
+		if ((criminoso == false) && (local == true) && (armas == false)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "somente o local está correto";
+		}
+
+		if ((criminoso == false) && (local == false) && (armas == true)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "somente a arma está correta";
+		}
+
+		if ((criminoso == false) && (local == true) && (armas == true)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "somente o assassino está incorreto";
+		}
+
+		if ((criminoso == true) && (local == false) && (armas == true)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "somente o local está incorreto";
+		}
+
+		if ((criminoso == true) && (local == true) && (armas == false)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "somente a arma está incorreta";
+		}
+
+		if ((criminoso == true) && (local == true) && (armas == true)) {
+			/*Imprime texto no Pop Up*/
+			document.getElementById("resposta").innerHTML = "todos corretos, você solucionou o caso";
+			/*Retira o Botão Tentar Novamente*/
+			document.getElementById("tentarNovamente").style.display = "none";
+		}
+
+	})
+</script>
+
+</html>
